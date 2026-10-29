@@ -1,14 +1,17 @@
 package com.levytech.domain;
 
-public class FlatLevy implements LevyPlan{
+public class FlatLevyPlan implements LevyPlan{
     private final long rate;
     private final int graceDays;
 
     public FlatLevyPlan(long rate, int graceDays){
+        if(rate < 0 ){
+            throw new IllegalArgumentException(" Rate cannot be negative");
+        }
         this.rate= rate;
         this.graceDays = graceDays;
     }
-    @override
+    @Override
     public long calculateCharge(){
         return rate;
     }

@@ -9,6 +9,10 @@ public class TieredLevyPlan implements LevyPlan{
         this.base = base;
         this.surcharge = surcharge;
         this.graceDays = graceDays;
+        if(base <0 || surcharge < 0){
+
+            throw new IllegalArgumentException("Amount must not be negative");
+        }
     }
     @Override
     public long calculateCharge(){
