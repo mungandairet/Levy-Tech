@@ -3,7 +3,7 @@ package com.levytech.domain;
 import java.time.LocalDate;
 
 public class Trader {
-   
+
     private int id;
     private String fullName;
     private String phone;
@@ -14,9 +14,13 @@ public class Trader {
     private LocalDate arrearsSince;
     private Integer stallId;
     private boolean active;
- 
 
-    public Trader(int id, String fullName, String phone, String productCategory, int planId, long balanceNgwee, long arrearsNgwee, LocalDate arrearsSince, Integer stallId, boolean active) {
+    public Trader(int id, String fullName, String phone,
+                  String productCategory, int planId,
+                  long balanceNgwee, long arrearsNgwee,
+                  LocalDate arrearsSince, Integer stallId,
+                  boolean active) {
+
         this.id = id;
         this.fullName = fullName;
         this.phone = phone;
@@ -42,30 +46,59 @@ public class Trader {
     public boolean isActive() { return active; }
 
     // Business Logic
+
     public void credit(long amount) {
-        if (amount <= 0) throw new IllegalArgumentException("Amount must be positive");
-        this.balanceNgwee += amount;
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+
+        this.balanceNgwee = Math.addExact(this.balanceNgwee, amount);
     }
 
     public void debit(long amount) {
-        if (amount <= 0) throw new IllegalArgumentException("Amount must be positive");
-        if (amount > balanceNgwee) throw new IllegalArgumentException("Insufficient balance");
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+
+        if (amount > balanceNgwee) {
+            throw new IllegalArgumentException("Insufficient balance");
+        }
+
         this.balanceNgwee -= amount;
     }
 
     public void recordArrears(long amount, LocalDate cycleDate) {
-        if (amount <= 0) throw new IllegalArgumentException("Amount must be positive");
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+
+        if (cycleDate == null) {
+            throw new IllegalArgumentException("Cycle date cannot be null");
+        }
+
+        long updatedArrears = Math.addExact(this.arrearsNgwee, amount);
+
         if (this.arrearsSince == null) {
             this.arrearsSince = cycleDate;
         }
-        this.arrearsNgwee += amount;
+
+        this.arrearsNgwee = updatedArrears;
     }
 
     public void reduceArrears(long amount) {
-        if (amount <= 0) throw new IllegalArgumentException("Amount must be positive");
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+
+        if (amount > this.arrearsNgwee) {
+            throw new IllegalArgumentException(
+                "Cannot reduce arrears by more than the outstanding amount"
+            );
+        }
+
         this.arrearsNgwee -= amount;
-        if (this.arrearsNgwee <= 0) {
-            this.arrearsNgwee = 0;
+
+        if (this.arrearsNgwee == 0) {
             this.arrearsSince = null;
         }
     }
