@@ -8,6 +8,9 @@ public class FlatLevyPlan implements LevyPlan{
         if(rateNgwee < 0 ){
             throw new IllegalArgumentException(" Rate cannot be negative");
         }
+        if (graceDays < 0 ) {
+            throw new IllegalArgumentException("Grace Days can`t be negative");
+        }
         this.rateNgwee= rateNgwee;
         this.graceDays = graceDays;
     }
