@@ -49,7 +49,7 @@ public class BillingService {
 
                 LevyPlan plan = planDao.findById(c, trader.getPlanId());
                 if (plan == null) throw new RuntimeException("Plan not found for trader " + traderId);
-                long charge = plan.calculateCharge();
+                long charge = plan.calculateChargeNgwee();
 
                 BillingOutcome outcome;
 
