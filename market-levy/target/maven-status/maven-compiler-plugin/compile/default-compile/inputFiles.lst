@@ -5,8 +5,10 @@ C:\Users\User\Downloads\Levy-Tech\market-levy\src\main\java\com\levytech\service
 C:\Users\User\Downloads\Levy-Tech\market-levy\src\main\java\com\levytech\exception\TraderNotBillableException.java
 C:\Users\User\Downloads\Levy-Tech\market-levy\src\main\java\com\levytech\domain\FlatLevyPlan.java
 C:\Users\User\Downloads\Levy-Tech\market-levy\src\main\java\com\levytech\domain\Trader.java
+C:\Users\User\Downloads\Levy-Tech\market-levy\src\main\java\com\levytech\service\PaymentService.java
 C:\Users\User\Downloads\Levy-Tech\market-levy\src\main\java\com\levytech\domain\Stall.java
 C:\Users\User\Downloads\Levy-Tech\market-levy\src\main\java\com\levytech\exception\CycleAlreadyBilledException.java
+C:\Users\User\Downloads\Levy-Tech\market-levy\src\main\java\com\levytech\domain\Payment.java
 C:\Users\User\Downloads\Levy-Tech\market-levy\src\main\java\com\levytech\exception\InvalidBillingCycleException.java
 C:\Users\User\Downloads\Levy-Tech\market-levy\src\main\java\com\levytech\domain\BasePlusSurchargeLevyPlan.java
 C:\Users\User\Downloads\Levy-Tech\market-levy\src\main\java\com\levytech\domain\LedgerEntry.java
