@@ -14,4 +14,4 @@ public final class LevyPlanFactory {
             throw new IllegalArgumentException("Unknown plan type: " + planType);
         }
     }
-}
+}   
