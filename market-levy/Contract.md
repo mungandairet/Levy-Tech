@@ -71,3 +71,56 @@ All DAO methods take Connection c as the first parameter and never commit.
 - LedgerDao.cycleAlreadyBilled(c, traderId, cycle)
 - LedgerDao.insert(c, entry)
 - PaymentDao.insert(c, payment)
+
+7. Market API
+
+- Markets have an auto-generated integer `id` and required `name` and
+  `location` string fields.
+- `GET /api/markets` returns all markets ordered by ID with HTTP 200.
+- `GET /api/markets/{id}` returns one market with HTTP 200, or HTTP 404 if
+  it does not exist.
+- `POST /api/markets` accepts a JSON object with `name` and `location`,
+  returning the created market with HTTP 201.
+- `PUT /api/markets/{id}` accepts the same JSON object and returns the
+  updated market with HTTP 200, or HTTP 404 if it does not exist.
+- `DELETE /api/markets/{id}` returns HTTP 204 on success, or HTTP 404 if it
+  does not exist.
+- Invalid IDs and missing or blank fields return HTTP 400. Error responses
+  are JSON objects containing `error` and `message`.
+
+8. Levy Plan, Trader, and Stall APIs
+
+- `GET /api/plans` returns configured levy plan options for trader forms.
+- `POST /api/plans` accepts `name`, `planType` (`FLAT` or
+  `BASE_PLUS_SURCHARGE`), `baseNgwee`, `surchargeNgwee`, and `graceDays`,
+  returning the created plan with HTTP 201. Flat plans require a zero
+  surcharge. Plan amounts are whole Ngwee.
+- Trader requests use `fullName`, optional `phone`, `productCategory`,
+  `planId`, optional `stallId`, and optional `active`.
+- `GET /api/traders` and `GET /api/traders/{id}` return trader records.
+- `POST /api/traders` creates a trader and returns HTTP 201. Account balance
+  and arrears start at zero and are not writable through profile requests.
+- `PUT /api/traders/{id}` updates profile and assignment fields, preserving
+  account balance and arrears.
+- `DELETE /api/traders/{id}` deactivates the trader, releases their stall,
+  and returns HTTP 204 so payment and ledger history remain intact.
+- An active trader can be assigned with `stallId`; an occupied stall returns
+  HTTP 409. Setting a trader inactive clears their stall assignment.
+- Stall requests use `code`, `section`, and positive `sizeSqm` fields.
+  Occupancy is derived from the active trader's `stallId`.
+- Stall routes support `GET /api/stalls`, `GET /api/stalls/{id}`,
+  `POST /api/stalls`, `PUT /api/stalls/{id}`, and
+  `DELETE /api/stalls/{id}`. Create returns HTTP 201, update returns HTTP 200,
+  and delete returns HTTP 204.
+- Deleting an assigned stall returns HTTP 409. Unknown resources return
+  HTTP 404; malformed or invalid request fields return HTTP 400.
+
+9. Running the application
+
+- From the `market-levy` directory, run `mvn clean test` to compile and test.
+- Run `mvn compile exec:java` or launch `com.levytech.Main` from the IDE after
+  building the Maven project. The compile step copies the frontend files into
+  the runtime classpath used by Javalin's static file handler.
+- The API and frontend are served from `http://localhost:7000`; the UI uses
+  same-origin API requests and does not require CORS configuration.
+- Create a levy plan from the Plans page before registering traders.

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Traders | Market Levy</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="/index.html"><span class="brand-mark">M</span><span>Market<span class="brand-light">Levy</span><small>MARKET OPERATIONS</small></span></a><p class="nav-caption">WORKSPACE</p>
+      <nav class="nav-links" aria-label="Main navigation"><a href="/index.html"><span>▦</span> Overview</a><a href="/markets.html"><span>⌂</span> Markets</a><a class="active" href="/traders.html"><span>♙</span> Traders</a><a href="/stalls.html"><span>▤</span> Stalls</a><a href="/plans.html"><span>◈</span> Levy plans</a></nav>
+      <div class="sidebar-note"><span class="status-dot"></span><div><strong>Market services</strong><small>API-connected workspace</small></div></div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar"><div><p class="eyebrow">WORKSPACE / TRADERS</p><h1>Traders</h1></div><div class="topbar-right"><span class="connection"><i></i> Live data</span><span class="avatar">ML</span></div></header>
+      <section class="page-content">
+        <div class="page-heading"><div><h2>Trader directory</h2><p class="muted">Manage trader profiles, levy plans, and stall assignments.</p></div><button id="add-trader" class="button button-primary" type="button"><span>＋</span> Register trader</button></div>
+        <section class="panel table-panel">
+          <div class="table-toolbar"><div><h3>All traders</h3><span id="trader-count" class="count-label">Loading…</span></div><label class="search"><span>⌕</span><input id="trader-search" type="search" placeholder="Search name, phone, category" aria-label="Search traders"></label></div>
+          <div id="trader-message" class="inline-message" role="status">Loading traders…</div>
+          <div class="table-wrap"><table><thead><tr><th>TRADER</th><th>PHONE</th><th>PRODUCT CATEGORY</th><th>LEVY PLAN</th><th>STALL</th><th>STATUS</th><th class="actions-heading">ACTIONS</th></tr></thead><tbody id="trader-rows"></tbody></table></div>
+        </section>
+      </section>
+    </main>
+  </div>
+  <dialog id="trader-dialog" class="form-dialog"><form id="trader-form"><div class="dialog-heading"><div><p class="eyebrow">TRADER PROFILE</p><h2 id="trader-dialog-title">Register trader</h2></div><button class="icon-button" type="button" data-close aria-label="Close dialog">×</button></div><input id="trader-id" type="hidden"><label>Full name<input id="trader-name" required maxlength="120" autocomplete="name"></label><label>Phone number <span class="optional">(optional)</span><input id="trader-phone" maxlength="40" type="tel" autocomplete="tel"></label><label>Product category<input id="trader-category" required maxlength="100" placeholder="e.g. Produce"></label><label>Levy plan<select id="trader-plan" required><option value="">Loading plans…</option></select></label><label>Stall assignment <span class="optional">(optional)</span><select id="trader-stall"><option value="">No stall assigned</option></select></label><label class="checkbox-label"><input id="trader-active" type="checkbox" checked> Active trader</label><p id="trader-form-help" class="form-help"></p><p class="form-error" id="trader-form-error" role="alert"></p><div class="dialog-actions"><button class="button button-secondary" type="button" data-close>Cancel</button><button class="button button-primary" type="submit">Save trader</button></div></form></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/js/app.js" defer></script><script src="/js/traders.js" defer></script>
+</body>
+</html>
