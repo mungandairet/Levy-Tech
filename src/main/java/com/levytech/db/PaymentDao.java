@@ -26,7 +26,7 @@ public class PaymentDao {
                     trader_id,
                     amount_ngwee,
                     paid_on,
-                    cycle
+                    reference
                 ) VALUES (?, ?, ?, ?)
                 """;
 
@@ -36,7 +36,7 @@ public class PaymentDao {
             ps.setInt(1, payment.traderId());
             ps.setLong(2, payment.amountNgwee());
             ps.setString(3, payment.paidOn().toString());
-            ps.setString(4, payment.cycle());
+            ps.setString(4, payment.reference());
 
             ps.executeUpdate();
 
@@ -47,7 +47,7 @@ public class PaymentDao {
                             payment.traderId(),
                             payment.amountNgwee(),
                             payment.paidOn(),
-                            payment.cycle()
+                            payment.reference()
                     );
                 }
             }
@@ -62,7 +62,7 @@ public class PaymentDao {
             Connection c, int traderId) throws SQLException {
 
         String sql = """
-                SELECT id, trader_id, amount_ngwee, paid_on, cycle
+                SELECT id, trader_id, amount_ngwee, paid_on, reference
                 FROM payments
                 WHERE trader_id = ?
                 ORDER BY id DESC
@@ -80,7 +80,7 @@ public class PaymentDao {
                             rs.getInt("trader_id"),
                             rs.getLong("amount_ngwee"),
                             LocalDate.parse(rs.getString("paid_on")),
-                            rs.getString("cycle")
+                            rs.getString("reference")
                     ));
                 }
             }
