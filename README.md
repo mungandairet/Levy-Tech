@@ -21,7 +21,7 @@ A Java backend built with Javalin that helps market committees in Ndola manage t
    - Responsibility: Database (Schema, seed data and DAOs)
 
 4. **Chewe Sichela**
-   - Student ID: 24
+   - Student ID: 2410110
    - Responsibility: Payments and Exceptions
 
 5. **Meleki Stephen**
