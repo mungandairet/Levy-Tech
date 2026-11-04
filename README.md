@@ -6,6 +6,25 @@ A Java backend built with Javalin that helps market committees in Ndola manage t
 **Course:** Object-Oriented Programming  
 **Institution:** Zambia University College of Technology
 
+## 1. The Problem
+
+Market committees in Ndola often rely on handwritten records to manage traders, allocate stalls and track levy payments. This can lead to lost records, calculation errors and difficulties identifying traders who have not paid. Levy-Tech provides a digital system to make these activities easier, more accurate and organised.
+
+## 2. How to Run
+
+**Requirements:**
+- Install Java 17 or later.
+- Install Apache Maven.
+- Clone the Levy-Tech repository from GitHub.
+- Open the project in an IDE such as IntelliJ IDEA.
+
+**Steps:**
+1. Open the project folder in your IDE.
+2. Allow Maven to download the required dependencies.
+3. Open `src/main/java/com/levytech/Main.java`.
+4. Run the `Main` class to start the Javalin application.
+5. Open your browser and visit `http://localhost:7070` if the application is configured to use port 7070.
+
 ## Group Members and Responsibilities
 
 1. **Tatenda Mungandaire**
@@ -28,7 +47,7 @@ A Java backend built with Javalin that helps market committees in Ndola manage t
    - Student ID: 2420966
    - Responsibility: Frontend (Web pages and user interface)
 
-## Main Classes
+## 3. Main Classes
 
 - **Trader** – Manages trader details, balances, arrears and stall assignments.
 - **Stall** – Manages market stalls and prevents double allocation.
@@ -45,4 +64,3 @@ A Java backend built with Javalin that helps market committees in Ndola manage t
 - SQLite
 - Maven
 - JUnit 5
-
