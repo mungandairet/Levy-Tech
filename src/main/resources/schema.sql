@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS ledger_entries (
         ),
 
     entry_date TEXT NOT NULL,
-    description TEXT,
+    description TEXT NOT NULL,
 
     FOREIGN KEY (trader_id) REFERENCES traders(id)
 );
@@ -123,3 +123,8 @@ CREATE INDEX IF NOT EXISTS idx_ledger_entries_trader_id
 
 CREATE INDEX IF NOT EXISTS idx_ledger_entries_cycle
     ON ledger_entries(trader_id, cycle);
+-- Prevent duplicate billing for the same trader and cycle.
+CREATE UNIQUE INDEX IF NOT EXISTS uq_ledger_billing_cycle
+    ON ledger_entries(trader_id, cycle)
+    WHERE cycle IS NOT NULL
+      AND entry_type IN ('DEDUCTION', 'ARREARS');
