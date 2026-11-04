@@ -1,28 +1,16 @@
-# Compiled files
-*.class
-
-# Log files
-*.log
-
-# Package files
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# JVM crash logs
-hs_err_pid*
-replay_pid*
-
 # Maven build output
 target/
 
 # SQLite database files
 *.db
+*.db-shm
+*.db-wal
 
-# SQLite temporary files
-market.db-shm
-market.db-wal
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+
+# IDE files
+.idea/
+.vscode/
+*.iml
