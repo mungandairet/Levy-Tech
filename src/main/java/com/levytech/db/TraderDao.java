@@ -62,6 +62,56 @@ public class TraderDao {
         return traders;
     }
 
+    public Trader insert(Connection c, Trader trader) throws SQLException {
+        String sql = """
+                INSERT INTO traders (
+                    full_name, phone, product_category, plan_id, balance_ngwee,
+                    arrears_ngwee, arrears_since, stall_id, active
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """;
+
+        try (PreparedStatement ps = c.prepareStatement(
+                sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, trader.getFullName());
+            ps.setString(2, trader.getPhone());
+            ps.setString(3, trader.getProductCategory());
+            ps.setInt(4, trader.getPlanId());
+            ps.setLong(5, trader.getBalanceNgwee());
+            ps.setLong(6, trader.getArrearsNgwee());
+            if (trader.getArrearsSince() == null) {
+                ps.setNull(7, Types.VARCHAR);
+            } else {
+                ps.setString(7, trader.getArrearsSince().toString());
+            }
+            if (trader.getStallId() == null) {
+                ps.setNull(8, Types.INTEGER);
+            } else {
+                ps.setInt(8, trader.getStallId());
+            }
+            ps.setInt(9, trader.isActive() ? 1 : 0);
+            ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return new Trader(
+                            rs.getInt(1),
+                            trader.getFullName(),
+                            trader.getPhone(),
+                            trader.getProductCategory(),
+                            trader.getPlanId(),
+                            trader.getBalanceNgwee(),
+                            trader.getArrearsNgwee(),
+                            trader.getArrearsSince(),
+                            trader.getStallId(),
+                            trader.isActive()
+                    );
+                }
+            }
+        }
+
+        throw new SQLException("Failed to retrieve generated trader ID");
+    }
+
     public void update(Connection c, Trader trader)
             throws SQLException {
 
