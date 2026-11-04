@@ -1,80 +1,133 @@
-package com.levytech.db;
+PRAGMA foreign_keys = ON;
 
-// Import classes for reading SQL files from the resources folder.
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+-- ==========================================
+-- 1. LEVY PLANS
+-- ==========================================
 
-// Import JDBC classes for database operations.
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+CREATE TABLE IF NOT EXISTS plans (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    plan_type TEXT NOT NULL
+        CHECK (plan_type IN ('FLAT', 'BASE_PLUS_SURCHARGE')),
+    rate_ngwee INTEGER NOT NULL
+        CHECK (rate_ngwee >= 0),
+    surcharge_ngwee INTEGER NOT NULL DEFAULT 0
+        CHECK (surcharge_ngwee >= 0),
+    grace_days INTEGER NOT NULL DEFAULT 0
+        CHECK (grace_days >= 0)
+);
 
-public final class Database {
 
-    // Public constructor allows services to receive a Database object.
-    public Database() {
-    }
+-- ==========================================
+-- 2. MARKET STALLS
+-- ==========================================
 
-    // Gives services such as BillingService and PaymentService
-    // a way to obtain a database connection.
-    public Connection connect() throws SQLException {
-        return DatabaseConnection.getConnection();
-    }
+CREATE TABLE IF NOT EXISTS stalls (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code TEXT NOT NULL UNIQUE,
+    section TEXT NOT NULL,
+    size_sqm REAL NOT NULL
+        CHECK (size_sqm > 0)
+);
 
-    // Initializes the database by creating tables first
-    // and then inserting the initial seed data.
-    public static void init() throws SQLException, IOException {
 
-        // Create the database tables.
-        executeSqlResource("/schema.sql");
+-- ==========================================
+-- 3. TRADERS
+-- ==========================================
 
-        // Insert the initial plans and other starting records.
-        executeSqlResource("/seed.sql");
-    }
+CREATE TABLE IF NOT EXISTS traders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    full_name TEXT NOT NULL,
+    phone TEXT NOT NULL UNIQUE,
+    product_category TEXT NOT NULL,
+    active INTEGER NOT NULL DEFAULT 1
+        CHECK (active IN (0, 1)),
+    plan_id INTEGER NOT NULL,
+    stall_id INTEGER,
+    balance_ngwee INTEGER NOT NULL DEFAULT 0
+        CHECK (balance_ngwee >= 0),
+    arrears_ngwee INTEGER NOT NULL DEFAULT 0
+        CHECK (arrears_ngwee >= 0),
+    arrears_since TEXT,
 
-    // Reads an SQL file from src/main/resources and executes its commands.
-    private static void executeSqlResource(String resourcePath)
-            throws SQLException, IOException {
+    FOREIGN KEY (plan_id) REFERENCES plans(id),
+    FOREIGN KEY (stall_id) REFERENCES stalls(id)
+);
 
-        // Open the requested SQL resource.
-        // try-with-resources automatically closes the input stream.
-        try (InputStream input =
-                     Database.class.getResourceAsStream(resourcePath)) {
 
-            // If the file cannot be found, report a clear error.
-            if (input == null) {
-                throw new IOException(
-                        "Database resource not found: " + resourcePath);
-            }
+-- Only one active trader can occupy a stall.
+-- Inactive traders may retain their previous stall assignment.
 
-            // Read the entire SQL file and convert its bytes into text.
-            String sql = new String(
-                    input.readAllBytes(),
-                    StandardCharsets.UTF_8);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_traders_active_stall
+    ON traders(stall_id)
+    WHERE active = 1 AND stall_id IS NOT NULL;
 
-            // Open a database connection and create a Statement
-            // that will execute the SQL commands.
-            try (Connection connection =
-                         DatabaseConnection.getConnection();
-                 Statement statement = connection.createStatement()) {
 
-                // Split the SQL script at semicolons because each
-                // semicolon marks the end of an SQL statement.
-                String[] commands = sql.split(";");
+-- ==========================================
+-- 4. PAYMENTS
+-- ==========================================
 
-                // Go through each SQL command one at a time.
-                for (String command : commands) {
+CREATE TABLE IF NOT EXISTS payments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    trader_id INTEGER NOT NULL,
+    amount_ngwee INTEGER NOT NULL
+        CHECK (amount_ngwee > 0),
+    paid_on TEXT NOT NULL,
+    reference TEXT,
 
-                    // Remove unnecessary spaces and newlines.
-                    String trimmedCommand = command.trim();
+    FOREIGN KEY (trader_id) REFERENCES traders(id)
+);
 
-                    // Ignore empty commands and execute valid ones.
-                    if (!trimmedCommand.isEmpty()) {
-                        statement.execute(trimmedCommand);
-                    }
-                }
-            }
-        }
-    }
-}
+
+-- ==========================================
+-- 5. LEDGER ENTRIES
+-- ==========================================
+
+CREATE TABLE IF NOT EXISTS ledger_entries (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    trader_id INTEGER NOT NULL,
+    entry_type TEXT NOT NULL
+        CHECK (entry_type IN ('CREDIT', 'DEDUCTION', 'ARREARS')),
+    amount_ngwee INTEGER NOT NULL
+        CHECK (amount_ngwee >= 0),
+    balance_after_ngwee INTEGER NOT NULL
+        CHECK (balance_after_ngwee >= 0),
+
+    -- Billing cycle must be YYYY-MM.
+    -- NULL is allowed for entries without a billing cycle.
+    cycle TEXT
+        CHECK (
+            cycle IS NULL OR (
+                typeof(cycle) = 'text'
+                AND length(cycle) = 7
+                AND (
+                    cycle GLOB '[0-9][0-9][0-9][0-9]-0[1-9]'
+                    OR cycle GLOB '[0-9][0-9][0-9][0-9]-1[0-2]'
+                )
+            )
+        ),
+
+    entry_date TEXT NOT NULL,
+    description TEXT,
+
+    FOREIGN KEY (trader_id) REFERENCES traders(id)
+);
+
+
+-- ==========================================
+-- 6. LEDGER INDEXES
+-- ==========================================
+
+CREATE INDEX IF NOT EXISTS idx_ledger_entries_trader_id
+    ON ledger_entries(trader_id);
+
+CREATE INDEX IF NOT EXISTS idx_ledger_entries_cycle
+    ON ledger_entries(trader_id, cycle);
+
+-- MARKETS TABLE
+CREATE TABLE IF NOT EXISTS markets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    location TEXT NOT NULL
+);
+

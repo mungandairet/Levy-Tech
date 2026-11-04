@@ -67,6 +67,16 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
+
+            <!-- Run the API with `mvn compile exec:java` from this module directory. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <mainClass>com.levytech.Main</mainClass>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

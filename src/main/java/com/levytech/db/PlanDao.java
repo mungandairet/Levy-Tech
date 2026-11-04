@@ -94,7 +94,7 @@ public class PlanDao {
 
             ps.setString(1, option.name());
             ps.setString(2, option.planType());
-            ps.setLong(3, option.rateNgwee());
+            ps.setLong(3, option.baseNgwee());
             ps.setLong(4, option.surchargeNgwee());
             ps.setInt(5, option.graceDays());
 
@@ -106,7 +106,7 @@ public class PlanDao {
                             keys.getInt(1),
                             option.name(),
                             option.planType(),
-                            option.rateNgwee(),
+                            option.baseNgwee(),
                             option.surchargeNgwee(),
                             option.graceDays()
                     );
