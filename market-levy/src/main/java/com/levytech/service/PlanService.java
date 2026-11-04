@@ -29,7 +29,7 @@ public class PlanService {
     }
 
     public PlanOption create(
-            String name, String planType, long baseNgwee,
+            String name, String planType, long rateNgwee,
             long surchargeNgwee, int graceDays) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Plan name is required");
@@ -37,7 +37,7 @@ public class PlanService {
         if (planType == null || planType.isBlank()) {
             throw new IllegalArgumentException("Plan type is required");
         }
-        if (baseNgwee < 0 || surchargeNgwee < 0 || graceDays < 0) {
+        if (rateNgwee < 0 || surchargeNgwee < 0 || graceDays < 0) {
             throw new IllegalArgumentException(
                     "Plan amounts and grace days cannot be negative");
         }
@@ -48,14 +48,14 @@ public class PlanService {
                     "Flat plans cannot have a surcharge");
         }
         LevyPlanFactory.fromRow(
-                normalizedType, baseNgwee, surchargeNgwee, graceDays);
+                normalizedType, rateNgwee, surchargeNgwee, graceDays);
 
         try (Connection c = db.connect()) {
             return planDao.insert(c, new PlanOption(
                     0,
                     name.trim(),
                     normalizedType,
-                    baseNgwee,
+                    rateNgwee,
                     surchargeNgwee,
                     graceDays
             ));
