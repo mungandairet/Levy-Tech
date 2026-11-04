@@ -1,10 +1,8 @@
 package com.levytech.domain;
 
-import java.time.LocalDate;
-
 public record ArrearsReport(
     int traderId,
-     String traderName, 
+     String traderName,
      Integer stallId,
      long arrearsSince) {
 }
