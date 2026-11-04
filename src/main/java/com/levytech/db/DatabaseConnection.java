@@ -12,7 +12,7 @@ public final class DatabaseConnection {
     // If market.db does not exist, SQLite will create it.
     private static final String DATABASE_URL = "jdbc:sqlite:market.db";
 
-    
+
     private DatabaseConnection() {
     }
 

@@ -9,7 +9,7 @@ public class StallTest {
     @Test
     public void testOccupyAndVacate() {
         Stall stall = new Stall(1, "A-01", "Section A", 6.0, null);
-        
+
         // Initially vacant
         assertFalse(stall.isOccupied());
         assertNull(stall.getOccupiedByTraderId());
@@ -53,7 +53,7 @@ public class StallTest {
 
     @Test
     public void testInvalidStallCreation() {
-        
+
         assertThrows(IllegalArgumentException.class, () -> {
             new Stall(1, "A-01", "Section A", -5.0, null);
         });

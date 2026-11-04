@@ -13,13 +13,12 @@ CREATE TABLE IF NOT EXISTS plans (
         CHECK (rate_ngwee >= 0),
     surcharge_ngwee INTEGER NOT NULL DEFAULT 0
         CHECK (surcharge_ngwee >= 0),
-    grace_days INTEGER NOT NULL DEFAULT 0
+    grace_days INTEGER NOT NULL
         CHECK (grace_days >= 0)
 );
 
-
 -- ==========================================
--- 2. MARKET STALLS
+-- 2. STALLS
 -- ==========================================
 
 CREATE TABLE IF NOT EXISTS stalls (
@@ -30,7 +29,6 @@ CREATE TABLE IF NOT EXISTS stalls (
         CHECK (size_sqm > 0)
 );
 
-
 -- ==========================================
 -- 3. TRADERS
 -- ==========================================
@@ -38,7 +36,7 @@ CREATE TABLE IF NOT EXISTS stalls (
 CREATE TABLE IF NOT EXISTS traders (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     full_name TEXT NOT NULL,
-    phone TEXT NOT NULL UNIQUE,
+    phone TEXT UNIQUE,
     product_category TEXT NOT NULL,
     active INTEGER NOT NULL DEFAULT 1
         CHECK (active IN (0, 1)),
@@ -49,19 +47,14 @@ CREATE TABLE IF NOT EXISTS traders (
     arrears_ngwee INTEGER NOT NULL DEFAULT 0
         CHECK (arrears_ngwee >= 0),
     arrears_since TEXT,
-
     FOREIGN KEY (plan_id) REFERENCES plans(id),
     FOREIGN KEY (stall_id) REFERENCES stalls(id)
 );
 
-
 -- Only one active trader can occupy a stall.
--- Inactive traders may retain their previous stall assignment.
-
 CREATE UNIQUE INDEX IF NOT EXISTS idx_traders_active_stall
     ON traders(stall_id)
     WHERE active = 1 AND stall_id IS NOT NULL;
-
 
 -- ==========================================
 -- 4. PAYMENTS
@@ -74,10 +67,11 @@ CREATE TABLE IF NOT EXISTS payments (
         CHECK (amount_ngwee > 0),
     paid_on TEXT NOT NULL,
     reference TEXT,
-
     FOREIGN KEY (trader_id) REFERENCES traders(id)
 );
 
+CREATE INDEX IF NOT EXISTS idx_payments_trader_id
+    ON payments(trader_id);
 
 -- ==========================================
 -- 5. LEDGER ENTRIES
@@ -92,9 +86,6 @@ CREATE TABLE IF NOT EXISTS ledger_entries (
         CHECK (amount_ngwee >= 0),
     balance_after_ngwee INTEGER NOT NULL
         CHECK (balance_after_ngwee >= 0),
-
-    -- Billing cycle must be YYYY-MM.
-    -- NULL is allowed for entries without a billing cycle.
     cycle TEXT
         CHECK (
             cycle IS NULL OR (
@@ -106,13 +97,10 @@ CREATE TABLE IF NOT EXISTS ledger_entries (
                 )
             )
         ),
-
     entry_date TEXT NOT NULL,
     description TEXT,
-
     FOREIGN KEY (trader_id) REFERENCES traders(id)
 );
-
 
 -- ==========================================
 -- 6. LEDGER INDEXES
@@ -124,10 +112,12 @@ CREATE INDEX IF NOT EXISTS idx_ledger_entries_trader_id
 CREATE INDEX IF NOT EXISTS idx_ledger_entries_cycle
     ON ledger_entries(trader_id, cycle);
 
--- MARKETS TABLE
+-- ==========================================
+-- 7. MARKETS
+-- ==========================================
+
 CREATE TABLE IF NOT EXISTS markets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
     location TEXT NOT NULL
 );
-

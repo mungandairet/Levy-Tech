@@ -24,7 +24,7 @@ public class LevyPlanTest {
         assertEquals(5, plan.getGraceDays());
     }
 
-    @Test 
+    @Test
     public void rejectsUnknownPlanType() {
         assertThrows(IllegalArgumentException.class, () -> {
             LevyPlanFactory.fromRow("PREMIUM", 100, 50, 5);

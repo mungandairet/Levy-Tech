@@ -16,11 +16,11 @@ public final class LevyPlanFactory {
 
         if ("FLAT".equalsIgnoreCase(planType)) {
             return new FlatLevyPlan(baseNgwee, graceDays);
-        } 
+        }
         else if ("BASE_PLUS_SURCHARGE".equalsIgnoreCase(planType)) {
             return new BasePlusSurchargeLevyPlan(
                     baseNgwee, surchargeNgwee, graceDays);
-        } 
+        }
         else {
             throw new IllegalArgumentException("Unknown plan type: " + planType);
         }
